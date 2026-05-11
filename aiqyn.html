@@ -1,0 +1,277 @@
+<!DOCTYPE html>  
+<html lang="ru">  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <title>EcoSmart City — Global Impact</title>  
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">  
+    <style>  
+        :root {  
+            --primary: #10b981;  
+            --primary-glow: rgba(16, 185, 129, 0.6);  
+            --bg: #ffffff;  
+            --text: #1f2937;  
+            --card-bg: #ffffff;  
+            --border: #f1f5f9;  
+        }  
+  
+        body.dark-mode {  
+            --bg: #0f172a;  
+            --text: #f1f5f9;  
+            --card-bg: #1e293b;  
+            --border: #334155;  
+        }  
+  
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Montserrat', sans-serif; }  
+        body { background-color: var(--bg); color: var(--text); transition: 0.3s; line-height: 1.5; }  
+  
+        /* Шапка */  
+        header {  
+            background: rgba(var(--bg), 0.9);  
+            backdrop-filter: blur(15px);  
+            padding: 15px 8%;  
+            position: fixed; top: 0; width: 100%;  
+            display: flex; justify-content: space-between; align-items: center;  
+            z-index: 1000; border-bottom: 1px solid var(--border);  
+        }  
+        .logo { font-size: 22px; font-weight: 800; color: var(--primary); text-decoration: none; text-transform: uppercase; }  
+        .nav-links a { text-decoration: none; color: inherit; font-size: 14px; font-weight: 600; margin-left: 25px; transition: 0.3s; }  
+        .nav-links a:hover { color: var(--primary); }  
+  
+        /* Секции */  
+        section { display: none; padding-top: 80px; animation: fadeIn 0.6s ease; }  
+        section.active { display: block; }  
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }  
+  
+        /* Главная */  
+        .hero {  
+            height: 75vh;  
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?q=80&w=2070');  
+            background-size: cover; background-position: center;  
+            display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; color: white;  
+            border-radius: 0 0 40px 40px;  
+        }  
+        .hero h1 { font-size: clamp(28px, 6vw, 52px); font-weight: 800; margin-bottom: 20px; }  
+        .hero p { font-size: 18px; max-width: 700px; margin-bottom: 30px; opacity: 0.9; }  
+  
+        /* Кнопки со свечением */  
+        .btn {  
+            padding: 16px 40px; background: var(--primary); color: white; border-radius: 12px;  
+            font-size: 15px; font-weight: 700; text-transform: uppercase; border: none; cursor: pointer;  
+            transition: 0.3s; box-shadow: 0 5px 15px var(--primary-glow);  
+        }  
+        .btn:hover {  
+            transform: translateY(-3px);  
+            box-shadow: 0 0 25px var(--primary), 0 0 40px var(--primary-glow);  
+        }  
+  
+        /* Блок статистики (Спасенные ресурсы) */  
+        .stats-grid {  
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));  
+            gap: 20px; padding: 40px 8%; text-align: center;  
+        }  
+        .stat-card {  
+            background: var(--card-bg); padding: 30px; border-radius: 20px; border: 2px solid var(--border);  
+        }  
+        .stat-card h4 { font-size: 32px; color: var(--primary); font-weight: 800; margin-bottom: 5px; }  
+        .stat-card p { font-size: 13px; font-weight: 600; text-transform: uppercase; opacity: 0.7; }  
+  
+        /* Карточки деталей */  
+        .container { padding: 40px 8%; }  
+        .info-card {  
+            background: var(--card-bg); padding: 30px; border-radius: 25px; border: 2px solid var(--border);  
+            margin-bottom: 20px; transition: 0.3s;  
+        }  
+        .info-card h3 { font-size: 20px; font-weight: 800; margin-bottom: 15px; color: var(--primary); }  
+        .detail { font-size: 15px; margin-bottom: 8px; font-weight: 400; }  
+        .detail b { font-weight: 600; }  
+  
+        /* Анализ */  
+        .input-field {  
+            width: 100%; padding: 20px; background: transparent; border: 2px solid var(--border);  
+            border-radius: 12px; margin: 20px 0; font-size: 18px; font-weight: 600; color: var(--primary); outline: none;  
+        }  
+        .input-field:focus { border-color: var(--primary); }  
+  
+        /* Модалка по центру */  
+        #modal {  
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;  
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);  
+            display: none; justify-content: center; align-items: center; z-index: 2000;  
+        }  
+        .modal-content {  
+            background: var(--card-bg); padding: 40px; border-radius: 30px; text-align: center;  
+            max-width: 450px; width: 90%; border: 2px solid var(--primary);  
+            animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);  
+        }  
+        @keyframes pop { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }  
+  
+        .quiz-opt {  
+            width: 100%; padding: 15px; margin: 10px 0; background: var(--card-bg);  
+            border: 2px solid var(--border); border-radius: 12px; cursor: pointer;  
+            font-weight: 600; transition: 0.2s;  
+        }  
+        .quiz-opt:hover { border-color: var(--primary); transform: translateX(5px); }  
+  
+        footer { background: #0f172a; color: white; padding: 40px 8%; text-align: center; }  
+        footer p { font-size: 12px; font-weight: 600; letter-spacing: 1px; opacity: 0.5; }  
+    </style>  
+</head>  
+<body>  
+  
+    <header>  
+        <a href="javascript:void(0)" class="logo" onclick="showPage('home')">Eco<span>Smart</span></a>  
+        <nav class="nav-links">  
+            <a href="javascript:void(0)" onclick="showPage('home')">Главная</a>  
+            <a href="javascript:void(0)" onclick="showPage('tool')">Анализ</a>  
+            <a href="javascript:void(0)" onclick="showPage('quiz')">Квиз</a>  
+            <button onclick="toggleTheme()" style="background:none; border:none; cursor:pointer; margin-left: 20px;">🌓</button>  
+        </nav>  
+    </header>  
+  
+    <section id="home" class="active" style="padding-top: 0;">  
+        <div class="hero">  
+            <h1>ТВОЙ ВКЛАД В БУДУЩЕЕ</h1>  
+            <p>Умный помощник для сортировки отходов. Узнай, как одно действие спасает планету.</p>  
+            <button class="btn" onclick="showPage('tool')">Начать проверку</button>  
+        </div>  
+  
+        <div class="stats-grid">  
+            <div class="stat-card">  
+                <h4 id="treeStat">142</h4>  
+                <p>Спасенных деревьев</p>  
+            </div>  
+            <div class="stat-card">  
+                <h4>8.4k</h4>  
+                <p>Литров чистой воды</p>  
+            </div>  
+            <div class="stat-card">  
+                <h4>560</h4>  
+                <p>КВт сбереженной энергии</p>  
+            </div>  
+        </div>  
+  
+        <div class="container">  
+            <div class="info-card">  
+                <h3>📍 КОНТАКТНЫЕ ДАННЫЕ</h3>  
+                <p class="detail">Адрес: <b>проспект Независимости, 45</b></p>  
+                <p class="detail">Телефон: <b>+7 800 555 01 99</b></p>  
+                <p class="detail">Режим работы: <b>09:00 — 21:00</b></p>  
+            </div>  
+        </div>  
+    </section>  
+  
+    <section id="tool">  
+        <div class="container" style="max-width: 700px; margin: 0 auto;">  
+            <h2 style="font-weight: 800; margin-bottom: 10px;">КЛАССИФИКАЦИЯ</h2>  
+            <p style="font-size: 14px; font-weight: 600; opacity: 0.7;">Введите цифровой код с упаковки товара:</p>  
+              
+            <input type="number" id="wasteCode" class="input-field" placeholder="Пример: 1, 20, 40, 70">  
+              
+            <button class="btn" style="width: 100%;" onclick="analyze()">Проверить код</button>  
+            <div id="resArea" style="margin-top: 30px; padding: 25px; border-radius: 15px; display: none; font-weight: 600; line-height: 1.6;"></div>  
+        </div>  
+    </section>  
+  
+    <section id="quiz">  
+        <div class="container" style="max-width: 700px; margin: 0 auto; text-align: center;">  
+            <h2 style="font-weight: 800; margin-bottom: 30px;">ЭКО-ТЕСТ</h2>  
+            <p id="q-text" style="font-size: 20px; font-weight: 600; margin-bottom: 30px;"></p>  
+            <div id="q-options"></div>  
+        </div>  
+    </section>  
+  
+    <div id="modal">  
+        <div class="modal-content">  
+            <h2 id="modalTitle" style="font-weight: 800; margin-bottom: 15px;"></h2>  
+            <p id="modalText" style="font-size: 15px; font-weight: 600; margin-bottom: 25px; opacity: 0.8;"></p>  
+            <button class="btn" onclick="closeModal()">Продолжить</button>  
+        </div>  
+    </div>  
+  
+    <footer>  
+        <p>©️ 2026 ECOSMART CITY. СОХРАНИМ ПРИРОДУ ВМЕСТЕ.</p>  
+    </footer>  
+  
+    <script>  
+        function showPage(id) {  
+            document.querySelectorAll('section').forEach(s => s.classList.remove('active'));  
+            document.getElementById(id).classList.add('active');  
+            window.scrollTo(0,0);  
+        }  
+  
+        function toggleTheme() { document.body.classList.toggle('dark-mode'); }  
+  
+        function openModal(title, text, isOk) {  
+            const m = document.getElementById('modal');  
+            const mt = document.getElementById('modalTitle');  
+            mt.innerText = title;  
+            mt.style.color = isOk ? "var(--primary)" : "#ef4444";  
+            document.getElementById('modalText').innerText = text;  
+            m.style.display = "flex";  
+        }  
+        function closeModal() { document.getElementById('modal').style.display = "none"; }  
+  
+        function analyze() {  
+            const code = document.getElementById('wasteCode').value;  
+            const res = document.getElementById('resArea');  
+            if (!code) return;  
+  
+            let msg = ""; let col = "";  
+            if (code >= 1 && code <= 7) {  
+        col = "#dcfce7";  
+        if(code == 1) msg = "<b>♻️ ПЭТ (PET 01):</b> Самый популярный пластик. Перерабатывается во флис и новые бутылки.";  
+        else if(code == 2) msg = "<b>♻️ ПНД (HDPE 02):</b> Безопасный пластик для бытовой химии. Отлично перерабатывается.";  
+        else if(code == 3) msg = "<b>⚠️ ПВХ (PVC 03):</b> Токсичный пластик. Почти не перерабатывается. Избегайте его!";  
+        else if(code == 4) msg = "<b>♻️ ПВД (LDPE 04):</b> Пленка и пакеты. Можно переработать, если они чистые.";  
+        else if(code == 5) msg = "<b>♻️ ПП (PP 05):</b> Безопасный пищевой пластик. Сдавайте в пункты приема.";  
+        else if(code == 6) msg = "<b>⚠️ ПС (PS 06):</b> Пенопласт и посуда. Трудно переработать, выделяет вредные вещества.";  
+        else if(code == 7) msg = "<b>❌ ПРОЧИЕ (07):</b> Смешанный пластик. Переработке не подлежит.";  
+    } else if (code >= 20 && code <= 22) {   
+                msg = "<b>БУМАГА:</b> Сдавая этот картон, вы спасаете <b>часть дерева</b> и экономите 20 литров воды.";   
+                col = "#e0f2fe";   
+            } else if (code == 40 || code == 41) {   
+                msg = "<b>МЕТАЛЛ:</b> Жесть/Алюминий. Переработка банки экономит 95% энергии, нужной для создания новой.";   
+                col = "#fef9c3";   
+            } else if (code >= 70 && code <= 72) {   
+                msg = "<b>СТЕКЛО:</b> Оно перерабатывается бесконечно. Вы помогаете сократить карьеры по добыче песка.";   
+                col = "#f3e8ff";   
+            } else {   
+                msg = "<b>НЕИЗВЕСТНЫЙ КОД:</b> Пожалуйста, обратитесь в наш центр по адресу пр. Независимости, 45.";   
+                col = "#f1f5f9";   
+            }  
+  
+            res.innerHTML = msg;  
+            res.style.background = col;  
+            res.style.display = "block";  
+            res.style.color = "#1f2937";  
+        }  
+  
+        const questions = [  
+            { q: "Сколько деревьев спасает 1 тонна макулатуры?", a: ["5 деревьев", "17 деревьев", "50 деревьев"], c: 1, info: "Это также экономит 30 000 литров воды!" },  
+            { q: "Срок разложения пластиковой бутылки?", a: ["100 лет", "450 лет", "1000 лет"], c: 1, info: "За это время она распадается на опасный микропластик." }  
+        ];  
+  
+        let curQ = 0;  
+        function loadQuiz() {  
+            const data = questions[curQ];  
+            document.getElementById('q-text').innerText = data.q;  
+            const opts = document.getElementById('q-options');  
+            opts.innerHTML = '';  
+            data.a.forEach((t, i) => {  
+                const b = document.createElement('button');  
+                b.className = "quiz-opt";  
+                b.innerText = t;  
+                b.onclick = () => {  
+                    if(i === data.c) openModal("ВЕРНО! 🌟", data.info, true);  
+                    else openModal("ОШИБКА ❌", "Правильно: " + data.a[data.c] + ". " + data.info, false);  
+                    curQ = (curQ + 1) % questions.length;  
+                    loadQuiz();  
+                };  
+                opts.appendChild(b);  
+            });  
+        }  
+        loadQuiz();  
+    </script>  
+</body>  
+</html>  
